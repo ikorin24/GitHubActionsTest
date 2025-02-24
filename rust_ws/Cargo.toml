@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "gha_test",
+    "gha_test_lib",
+]
