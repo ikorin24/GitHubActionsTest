@@ -24,8 +24,8 @@ jobs:
           ~/.cargo/registry/index/
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
-          **/target/
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          rust_ws/target/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('rust_ws/Cargo.lock') }}
     - name: Run tests (Debug)
       run: cargo test --manifest-path rust_ws/Cargo.toml
     - name: Run tests (Release)
