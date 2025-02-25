@@ -57,15 +57,14 @@ jobs:
     - name: Install linker
       shell: bash
       run: |
-        if [ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-musl" ]; then
+        if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-musl" ]]; then
           sudo apt update
           sudo apt install gcc-aarch64-linux-gnu -y
           mkdir -p ${{ env.WORKSPACE_DIR }}/.cargo
           cat << EOF > ${{ env.WORKSPACE_DIR }}/.cargo/config
-          [target.aarch64-unknown-linux-musl]
-          linker = "aarch64-linux-gnu-gcc"
-          EOF
-
+        [target.aarch64-unknown-linux-musl]
+        linker = "aarch64-linux-gnu-gcc"
+        EOF
         else
           echo 'skip this step'
         fi
