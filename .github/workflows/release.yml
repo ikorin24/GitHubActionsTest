@@ -60,6 +60,10 @@ jobs:
         if [ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-musl" ]; then
           sudo apt update
           sudo apt install gcc-aarch64-linux-gnu -y
+          cat << EOF > ./.cargo/config
+          [target.aarch64-unknown-linux-musl]
+          linker = "aarch64-linux-gnu-gcc"
+          EOF
         else
           echo 'skip this step'
         fi
