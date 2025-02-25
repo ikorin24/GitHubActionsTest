@@ -58,23 +58,6 @@ jobs:
         else
           echo 'skip this step'
         fi
-    # - name: Install linker
-    #   shell: bash
-    #   run: |
-    #     if [[ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-musl" ]]; then
-    #       cargo install cross --git https://github.com/cross-rs/cross
-    #       sudo systemctl start docker
-    #       cross build --release --manifest-path ${{ env.WORKSPACE_DIR }}/Cargo.toml --target ${{ matrix.platform.target }}
-    #     #   sudo apt update
-    #     #   sudo apt install gcc-aarch64-linux-gnu -y
-    #     #   mkdir -p ${{ env.WORKSPACE_DIR }}/.cargo
-    #     #   cat << EOF > ${{ env.WORKSPACE_DIR }}/.cargo/config
-    #     # [target.aarch64-unknown-linux-musl]
-    #     # linker = "aarch64-linux-gnu-gcc"
-    #     # EOF
-    #     else
-    #       echo 'skip this step'
-    #     fi
     - name: Build (Release)
       shell: bash
       run: |
@@ -90,5 +73,5 @@ jobs:
         GH_TOKEN: ${{ github.token }}
       shell: bash
       run: |
-        cp ${{ env.WORKSPACE_DIR }}/target/${{ matrix.platform.target }}/release/gha_test${{ matrix.platform.ext }} ./gha_test-${{ matrix.platform.target }}${{ matrix.platform.ext }}
-        gh release upload ${{ github.ref_name }} ./gha_test-${{ matrix.platform.target }}${{ matrix.platform.ext }}
+        cp ${{ env.WORKSPACE_DIR }}/target/${{ matrix.platform.target }}/release/gha_test${{ matrix.platform.ext }} ./gha_test-${{ matrix.platform.suffix }}${{ matrix.platform.ext }}
+        gh release upload ${{ github.ref_name }} ./gha_test-${{ matrix.platform.suffix }}${{ matrix.platform.ext }}
