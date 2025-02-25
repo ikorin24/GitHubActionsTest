@@ -76,6 +76,7 @@ jobs:
     #       echo 'skip this step'
     #     fi
     - name: Build (Release)
+      shell: bash
       run: |
         if ${{ matrix.platform.cross }}; then
           cargo install cross --git https://github.com/cross-rs/cross
