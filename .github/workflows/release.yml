@@ -70,4 +70,5 @@ jobs:
         GH_TOKEN: ${{ github.token }}
       shell: bash
       run: |
-        gh release upload ${{ github.ref_name }} ${{ env.WORKSPACE_DIR }}/target/${{ matrix.platform.target }}/release/gha_test${{ matrix.platform.ext }}
+        cp ${{ env.WORKSPACE_DIR }}/target/${{ matrix.platform.target }}/release/gha_test${{ matrix.platform.ext }} ./gha_test-${{ matrix.platform.target }}${{ matrix.platform.ext }}
+        gh release upload ${{ github.ref_name }} ./gha_test-${{ matrix.platform.target }}${{ matrix.platform.ext }}
