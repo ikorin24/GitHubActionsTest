@@ -40,6 +40,8 @@ jobs:
       run: |
         if ! rustup target list --installed | grep -q '^${{ matrix.platform.target }}$'; then
           rustup target add ${{ matrix.platform.target }}
+        else
+          echo 'skip this step'
         fi
     - name: Install linker
       shell: bash
@@ -47,11 +49,12 @@ jobs:
         if [ "${{ matrix.platform.target }}" == "aarch64-unknown-linux-musl" ]; then
           sudo apt update
           sudo apt install gcc-aarch64-linux-gnu -y
+        else
+          echo 'skip this step'
         fi
     - name: Build (Release)
       run: cargo build --release --manifest-path ${{ env.WORKSPACE_DIR }}/Cargo.toml --target ${{ matrix.platform.target }}
-    - uses: ncipollo/release-action@v1
-      with:
-        artifacts: ${{ env.WORKSPACE_DIR }}/target/release/gha_test${{ matrix.platform.ext }}
-        allowUpdates: true
-        generateReleaseNotes: true
+    - name: Create Release
+      shell: bash
+      run: |
+        gh release create ${{ github.ref_name }} ${{ env.WORKSPACE_DIR }}/target/${{ matrix.platform.target }}/release/gha_test${{ matrix.platform.ext }} -t "Release ${{ github.ref_name }}"

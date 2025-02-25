@@ -2,9 +2,17 @@ name: Run Tests
 
 on:
   push:
-    branches: [ "main", "dev" ]
+    branches:
+      - main
+      - dev
+    paths:
+      - rust_ws/**
   pull_request:
-    branches: [ "main", "dev" ]
+    branches:
+      - main
+      - dev
+    paths:
+      - rust_ws/**
 
 env:
   CARGO_TERM_COLOR: always
