@@ -16,25 +16,35 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  WORKING_DIR: ./rust_ws
 
 jobs:
   test:
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/cache@v4
+    - name: Cache cargo registry
+      uses: actions/cache@v1
       with:
-        path: |
-          ~/.cargo/bin/
-          ~/.cargo/registry/index/
-          ~/.cargo/registry/cache/
-          ~/.cargo/git/db/
-          rust_ws/target/
-        key: ${{ runner.os }}-cargo-${{ hashFiles('rust_ws/Cargo.lock') }}
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles(format('{0}/Cargo.lock', env.WORKING_DIR)) }}
+    - name: Cache cargo index
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-index-${{ hashFiles(format('{0}/Cargo.lock', env.WORKING_DIR)) }}
+    - name: Cache cargo build
+      uses: actions/cache@v1
+      with:
+        path: ${{ env.WORKING_DIR }}/target/
+        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles(format('{0}/Cargo.lock', env.WORKING_DIR)) }}
     - name: Run tests (Debug)
-      run: cargo test --manifest-path rust_ws/Cargo.toml
+      run: cargo test --manifest-path ${{ env.WORKING_DIR }}/Cargo.toml
     - name: Run tests (Release)
-      run: cargo test --release --manifest-path rust_ws/Cargo.toml
+      run: cargo test --release --manifest-path ${{ env.WORKING_DIR }}/Cargo.toml
