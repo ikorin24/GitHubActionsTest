@@ -50,14 +50,14 @@ jobs:
       contents: write
     steps:
     - uses: actions/checkout@v4
-    # - name: Install target
-    #   shell: bash
-    #   run: |
-    #     if ! rustup target list --installed | grep -q '^${{ matrix.platform.target }}$'; then
-    #       rustup target add ${{ matrix.platform.target }}
-    #     else
-    #       echo 'skip this step'
-    #     fi
+    - name: Install target
+      shell: bash
+      run: |
+        if ! rustup target list --installed | grep -q '^${{ matrix.platform.target }}$'; then
+          rustup target add ${{ matrix.platform.target }}
+        else
+          echo 'skip this step'
+        fi
     # - name: Install linker
     #   shell: bash
     #   run: |
@@ -77,7 +77,7 @@ jobs:
     #     fi
     - name: Build (Release)
       run: |
-        if [[ "${{ matrix.platform.cross }}" == "true" ]]; then
+        if ${{ matrix.platform.cross }}; then
           cargo install cross --git https://github.com/cross-rs/cross
           sudo systemctl start docker
           cross build --release --manifest-path ${{ env.WORKSPACE_DIR }}/Cargo.toml --target ${{ matrix.platform.target }}
