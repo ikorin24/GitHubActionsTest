@@ -30,17 +30,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Cache cargo registry
-      uses: actions/cache@v1
+      uses: actions/cache@v4
       with:
         path: ~/.cargo/registry
         key: ${{ runner.os }}-cargo-registry-${{ hashFiles(format('{0}/Cargo.lock', env.WORKING_DIR)) }}
     - name: Cache cargo index
-      uses: actions/cache@v1
+      uses: actions/cache@v4
       with:
         path: ~/.cargo/git
         key: ${{ runner.os }}-cargo-index-${{ hashFiles(format('{0}/Cargo.lock', env.WORKING_DIR)) }}
     - name: Cache cargo build
-      uses: actions/cache@v1
+      uses: actions/cache@v4
       with:
         path: ${{ env.WORKING_DIR }}/target/
         key: ${{ runner.os }}-cargo-build-target-${{ hashFiles(format('{0}/Cargo.lock', env.WORKING_DIR)) }}
