@@ -21,7 +21,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create ${{ github.ref_name }} -t "Release ${{ github.ref_name }}"
-  publish:
+  build_and_upload:
     needs: create_release
     strategy:
       matrix:
@@ -51,7 +51,7 @@ jobs:
       contents: write
     steps:
     - uses: actions/checkout@v4
-    - name: Install target
+    - name: Install cargo target
       shell: bash
       run: |
         if ! rustup target list --installed | grep -q '^${{ matrix.platform.target }}$'; then
@@ -69,7 +69,7 @@ jobs:
         else 
           cargo build --release --manifest-path ${{ env.WORKSPACE_DIR }}/Cargo.toml --target ${{ matrix.platform.target }}
         fi
-    - name: Create Release
+    - name: Upload artifact
       env:
         GH_TOKEN: ${{ github.token }}
       shell: bash
