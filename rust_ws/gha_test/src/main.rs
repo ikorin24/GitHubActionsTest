@@ -4,7 +4,7 @@ fn main() {
     let args = CliArgs::parse();
 
     let ans = mul_add(args.num1, args.num2, args.num3);
-    println!("hello, world");
+    println!("hello, world!");
     println!("{} * {} + {} = {}", args.num1, args.num2, args.num3, ans);
 }
 
