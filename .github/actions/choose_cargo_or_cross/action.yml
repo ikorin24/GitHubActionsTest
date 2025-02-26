@@ -8,11 +8,13 @@ inputs:
 outputs:
   command:
     description: 'cargo or cross'
+    value: ${{ steps.choose.outputs.command }}
 
 runs:
   using: composite
   steps:
     - name: choose cargo or cross
+      id: choose
       shell: bash
       env:
         USE_CROSS: ${{ inputs.cross }}
