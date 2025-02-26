@@ -1,22 +1,11 @@
-use std::path::Path;
+use clap::Parser;
 
 fn main() {
-    let args: Vec<_> = std::env::args().collect();
-    if args.len() != 4 {
-        eprintln!(
-            "Usage: {} <num1> <num2> <num3>",
-            Path::new(&args[0]).file_name().unwrap().to_string_lossy()
-        );
-        std::process::exit(1);
-    }
+    let args = CliArgs::parse();
 
-    let a = args[1].parse().unwrap();
-    let b = args[2].parse().unwrap();
-    let c = args[3].parse().unwrap();
-    let ans = mul_add(a, b, c);
-
+    let ans = mul_add(args.num1, args.num2, args.num3);
     println!("hello, world!");
-    println!("{} * {} + {} = {}", a, b, c, ans);
+    println!("{} * {} + {} = {}", args.num1, args.num2, args.num3, ans);
 }
 
 fn mul_add(a: u64, b: u64, c: u64) -> u64 {
@@ -32,4 +21,12 @@ mod tests {
         let result = mul_add(2, 2, 2);
         assert_eq!(result, 6);
     }
+}
+
+#[derive(Debug, Parser)]
+#[clap(about = "calculate: <NUM1> * <NUM2> + <NUM3>")]
+struct CliArgs {
+    num1: u64,
+    num2: u64,
+    num3: u64,
 }

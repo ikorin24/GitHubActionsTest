@@ -5,3 +5,6 @@ members = [
     "gha_test",
     "gha_test_lib",
 ]
+
+[workspace.dependencies]
+clap = { version = "4.4.11", features = ["derive"] }
