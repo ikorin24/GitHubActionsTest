@@ -47,6 +47,6 @@ jobs:
       with:
         cross: ${{ matrix.platform.cross }}
     - name: Run tests (Debug)
-      run: ${{ steps.choose.outputs.command }} test --manifest-path ${{ env.WORKING_DIR }}/Cargo.toml
+      run: ${{ steps.choose.outputs.command }} test --manifest-path ${{ env.WORKING_DIR }}/Cargo.toml --target ${{ matrix.platform.target }}
     - name: Run tests (Release)
-      run: ${{ steps.choose.outputs.command }} test --release --manifest-path ${{ env.WORKING_DIR }}/Cargo.toml
+      run: ${{ steps.choose.outputs.command }} test --release --manifest-path ${{ env.WORKING_DIR }}/Cargo.toml --target ${{ matrix.platform.target }}

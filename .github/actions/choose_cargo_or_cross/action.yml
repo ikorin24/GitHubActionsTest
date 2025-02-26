@@ -23,6 +23,8 @@ runs:
           cargo install cross --git https://github.com/cross-rs/cross
           sudo systemctl start docker
           echo "command=cross" >> $GITHUB_OUTPUT
+          echo "use cross"
         else 
           echo "command=cargo" >> $GITHUB_OUTPUT
+          echo "use cargo"
         fi
