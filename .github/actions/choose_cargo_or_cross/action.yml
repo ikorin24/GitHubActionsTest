@@ -1,0 +1,26 @@
+name: Choose cargo or cross
+description: 'cargo と cross のどちらを使うか選択してセットアップする'
+inputs:
+  cross:
+    description: 'use cross instead of cargo'
+    required: true
+    type: boolean
+outputs:
+  command:
+    description: 'cargo or cross'
+
+runs:
+  using: composite
+  steps:
+    - name: choose cargo or cross
+      shell: bash
+      env:
+        USE_CROSS: ${{ inputs.cross }}
+      run: |
+        if [ $USE_CROSS = true ]; then
+          cargo install cross --git https://github.com/cross-rs/cross
+          sudo systemctl start docker
+          echo "command=cross" >> $GITHUB_OUTPUT
+        else 
+          echo "command=cargo" >> $GITHUB_OUTPUT
+        fi

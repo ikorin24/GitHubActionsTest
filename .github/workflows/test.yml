@@ -42,7 +42,11 @@ jobs:
       with:
         target: ${{ matrix.platform.target }}
         workspace: ${{ env.WORKING_DIR }}
+    - uses: ./.github/actions/choose_cargo_or_cross
+      id: choose
+      with:
+        cross: ${{ matrix.platform.cross }}
     - name: Run tests (Debug)
-      run: cargo test --manifest-path ${{ env.WORKING_DIR }}/Cargo.toml
+      run: ${{ steps.choose.outputs.command }} test --manifest-path ${{ env.WORKING_DIR }}/Cargo.toml
     - name: Run tests (Release)
-      run: cargo test --release --manifest-path ${{ env.WORKING_DIR }}/Cargo.toml
+      run: ${{ steps.choose.outputs.command }} test --release --manifest-path ${{ env.WORKING_DIR }}/Cargo.toml
