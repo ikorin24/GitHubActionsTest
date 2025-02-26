@@ -1,0 +1,21 @@
+name: Install target triple
+description: '指定の cargo の target triple をインストールする'
+inputs:
+  target:
+    description: 'target triple for cargo'
+    required: true
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: install target triple
+      id: choose
+      shell: bash
+      run: |
+        if ! rustup target list --installed | grep -q '^${{ inputs.target }}$'; then
+          echo "install target triple: ${{ inputs.target }}"
+          rustup target add ${{ inputs.target }}
+        else
+          echo "target triple ${{ inputs.target }} is already installed"
+        fi
