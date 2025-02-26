@@ -15,7 +15,7 @@ fn main() {
     let c = args[3].parse().unwrap();
     let ans = mul_add(a, b, c);
 
-    println!("hello, world");
+    println!("hello, world!");
     println!("{} * {} + {} = {}", a, b, c, ans);
 }
 
