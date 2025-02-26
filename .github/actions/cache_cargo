@@ -1,0 +1,36 @@
+name: Use cache for cargo
+description: 'Cargo でビルド時の依存関係やライブラリのキャッシュの生成と復元'
+inputs:
+  target:
+    description: 'target triple for cargo'
+    required: true
+    type: string
+  workspace:
+    description: 'workspace directory'
+    required: true
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: Cache cargo registry
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/registry
+        key: ${{ inputs.target }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ inputs.target }}-cargo-registry-
+    - name: Cache cargo index
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/git
+        key: ${{ inputs.target }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ inputs.target }}-cargo-index-
+    - name: Cache cargo build
+      uses: actions/cache@v4
+      with:
+        path: ${{ inputs.workspace }}/target/
+        key: ${{ inputs.target }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ inputs.target }}-cargo-build-target-
