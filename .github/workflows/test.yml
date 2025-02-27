@@ -36,10 +36,6 @@ jobs:
       with:
         target: ${{ matrix.platform.target }}
         workspace: ${{ env.WORKING_DIR }}
-    # - uses: ./.github/actions/choose_cargo_or_cross
-    #   id: choose
-    #   with:
-    #     cross: ${{ matrix.platform.cross }}
     - uses: ./.github/actions/install_target_triple
       with:
         target: ${{ matrix.platform.target }}

@@ -30,22 +30,14 @@ jobs:
             target: x86_64-unknown-linux-musl
             ext: ''
             suffix: linux-x86_64
-            cross: false
-          - os: ubuntu-latest
-            target: aarch64-unknown-linux-musl
-            ext: ''
-            suffix: linux-arm64
-            cross: true
           - os: macos-latest
             target: aarch64-apple-darwin
             ext: ''
             suffix: mac-arm64
-            cross: false
           - os: windows-latest
             target: x86_64-pc-windows-msvc
             ext: .exe
             suffix: win-x86_64
-            cross: false
     runs-on: ${{ matrix.platform.os }}
     permissions:
       contents: write
@@ -55,25 +47,13 @@ jobs:
       with:
         target: ${{ matrix.platform.target }}
         workspace: ${{ env.WORKSPACE_DIR }}
-    
-    - name: Install cargo target
-      shell: bash
-      run: |
-        if ! rustup target list --installed | grep -q '^${{ matrix.platform.target }}$'; then
-          rustup target add ${{ matrix.platform.target }}
-        else
-          echo 'skip this step'
-        fi
+    - uses: ./.github/actions/install_target_triple
+      with:
+        target: ${{ matrix.platform.target }}
     - name: Build (Release)
       shell: bash
       run: |
-        if ${{ matrix.platform.cross }}; then
-          cargo install cross --git https://github.com/cross-rs/cross
-          sudo systemctl start docker
-          cross build --release --manifest-path ${{ env.WORKSPACE_DIR }}/Cargo.toml --target ${{ matrix.platform.target }}
-        else 
-          cargo build --release --manifest-path ${{ env.WORKSPACE_DIR }}/Cargo.toml --target ${{ matrix.platform.target }}
-        fi
+        cargo build --release --manifest-path ${{ env.WORKSPACE_DIR }}/Cargo.toml --target ${{ matrix.platform.target }}
     - name: Upload artifact
       env:
         GH_TOKEN: ${{ github.token }}
