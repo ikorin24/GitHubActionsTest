@@ -26,18 +26,66 @@ jobs:
     strategy:
       matrix:
         platform:
+          # Linux
           - os: ubuntu-latest
-            target: x86_64-unknown-linux-musl
-            ext: ''
-            suffix: linux-x86_64
+            cache_target: x86_64-unknown-linux-musl
+            cmd: | 
+              rustup target add x86_64-unknown-linux-musl
+              cargo build --release --manifest-path ./rust_ws/Cargo.toml --target x86_64-unknown-linux-musl
+              mkdir __out
+              cp ./rust_ws/target/x86_64-unknown-linux-musl/release/gha_test ./__out/gha_test-linux-x86_64
+            outputs: |
+              "./__out/gha_test-linux-x86_64"
+
+          # Mac
           - os: macos-latest
-            target: aarch64-apple-darwin
-            ext: ''
-            suffix: mac-arm64
+            cache_target: aarch64-apple-darwin
+            cmd: |
+              rustup target add aarch64-apple-darwin
+              rustup target add x86_64-apple-darwin
+              cargo build --release --manifest-path ./rust_ws/Cargo.toml --target aarch64-apple-darwin
+              cargo build --release --manifest-path ./rust_ws/Cargo.toml --target x86_64-apple-darwin
+              mkdir __out
+              lipo -create ./rust_ws/target/aarch64-apple-darwin/release/gha_test ./rust_ws/target/x86_64-apple-darwin/release/gha_test -output ./__out/gha_test-mac-universal
+              lipo -create ./rust_ws/target/aarch64-apple-darwin/release/libgha_test_ffi.dylib ./rust_ws/target/x86_64-apple-darwin/release/libgha_test_ffi.dylib -output ./__out/libgha_test_ffi-mac-universal.dylib
+            outputs: |
+              "./__out/gha_test-mac-universal"
+              "./__out/libgha_test_ffi-mac-universal.dylib"
+
+          # Windows
           - os: windows-latest
-            target: x86_64-pc-windows-msvc
-            ext: .exe
-            suffix: win-x86_64
+            cache_target: x86_64-pc-windows-msvc
+            cmd: |
+              rustup target add x86_64-pc-windows-msvc
+              cargo build --release --manifest-path ./rust_ws/Cargo.toml --target x86_64-pc-windows-msvc
+              mkdir __out
+              cp ./rust_ws/target/x86_64-pc-windows-msvc/release/gha_test.exe ./__out/gha_test-win-x86_64.exe
+              cp ./rust_ws/target/x86_64-pc-windows-msvc/release/gha_test_ffi.dll ./__out/gha_test_ffi-win-x86_64.dll
+            outputs: |
+              "./__out/gha_test-win-x86_64.exe"
+              "./__out/gha_test_ffi-win-x86_64.dll"
+
+          # Android
+          - os: ubuntu-latest
+            cache_target: aarch64-linux-android
+            cmd: | 
+              cross build --release --manifest-path ./rust_ws/Cargo.toml --target aarch64-linux-android
+              mkdir __out
+              cp ./rust_ws/target/aarch64-linux-android/release/gha_test_ffi.a ./__out/gha_test_ffi-android-arm64.a
+            outputs: |
+              "./__out/gha_test_ffi-android-arm64.a"
+
+          # iOS
+          - os: macos-latest
+            cache_target: aarch64-apple-ios
+            cmd: | 
+              rustup target add aarch64-apple-ios
+              cargo build --release --manifest-path ./rust_ws/Cargo.toml --target aarch64-apple-ios
+              mkdir __out
+              cp ./rust_ws/target/aarch64-apple-ios/release/gha_test_ffi.a ./__out/gha_test_ffi-ios-arm64.a
+            outputs: |
+              "./__out/gha_test_ffi-ios-arm64.a"
+
     runs-on: ${{ matrix.platform.os }}
     permissions:
       contents: write
@@ -45,19 +93,18 @@ jobs:
     - uses: actions/checkout@v4
     - uses: ./.github/actions/cache_cargo
       with:
-        target: ${{ matrix.platform.target }}
+        target: ${{ matrix.platform.cache_target }}
         workspace: ${{ env.WORKSPACE_DIR }}
-    - uses: ./.github/actions/install_target_triple
-      with:
-        target: ${{ matrix.platform.target }}
     - name: Build (Release)
       shell: bash
       run: |
-        cargo build --release --manifest-path ${{ env.WORKSPACE_DIR }}/Cargo.toml --target ${{ matrix.platform.target }}
+        ${{ matrix.platform.cmd }}
     - name: Upload artifact
       env:
         GH_TOKEN: ${{ github.token }}
       shell: bash
       run: |
-        cp ${{ env.WORKSPACE_DIR }}/target/${{ matrix.platform.target }}/release/gha_test${{ matrix.platform.ext }} ./gha_test-${{ matrix.platform.suffix }}${{ matrix.platform.ext }}
-        gh release upload ${{ github.ref_name }} ./gha_test-${{ matrix.platform.suffix }}${{ matrix.platform.ext }}
+        OUTPUTS=(${{ matrix.platform.outputs }})
+        for item in "${OUTPUTS[@]}"; do
+          gh release upload ${{ github.ref_name }} ${item}
+        done

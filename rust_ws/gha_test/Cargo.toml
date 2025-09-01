@@ -3,6 +3,15 @@ name = "gha_test"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "gha_test"
+path = "src/main.rs"
+
+[lib]
+name = "gha_test_ffi"
+path = "src/lib.rs"
+crate-type = ["cdylib", "staticlib"]
+
 [dependencies]
 clap = { workspace = true }
 gha_test_lib = { path = "../gha_test_lib" }
