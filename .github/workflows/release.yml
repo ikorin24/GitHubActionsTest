@@ -69,6 +69,7 @@ jobs:
           - os: ubuntu-latest
             cache_target: aarch64-linux-android
             cmd: | 
+              cargo install cross --git https://github.com/cross-rs/cross
               cross build --release --manifest-path ./rust_ws/Cargo.toml --target aarch64-linux-android
               mkdir __out
               cp ./rust_ws/target/aarch64-linux-android/release/gha_test_ffi.a ./__out/gha_test_ffi-android-arm64.a
