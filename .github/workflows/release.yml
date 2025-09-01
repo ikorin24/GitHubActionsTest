@@ -72,9 +72,9 @@ jobs:
               cargo install cross --git https://github.com/cross-rs/cross
               cross build --release --manifest-path ./rust_ws/Cargo.toml --target aarch64-linux-android
               mkdir __out
-              cp ./rust_ws/target/aarch64-linux-android/release/gha_test_ffi.a ./__out/gha_test_ffi-android-arm64.a
+              cp ./rust_ws/target/aarch64-linux-android/release/libgha_test_ffi.a ./__out/libgha_test_ffi-android-arm64.a
             outputs: |
-              "./__out/gha_test_ffi-android-arm64.a"
+              "./__out/libgha_test_ffi-android-arm64.a"
 
           # iOS
           - os: macos-latest
@@ -83,9 +83,9 @@ jobs:
               rustup target add aarch64-apple-ios
               cargo build --release --manifest-path ./rust_ws/Cargo.toml --target aarch64-apple-ios
               mkdir __out
-              cp ./rust_ws/target/aarch64-apple-ios/release/gha_test_ffi.a ./__out/gha_test_ffi-ios-arm64.a
+              cp ./rust_ws/target/aarch64-apple-ios/release/libgha_test_ffi.a ./__out/libgha_test_ffi-ios-arm64.a
             outputs: |
-              "./__out/gha_test_ffi-ios-arm64.a"
+              "./__out/libgha_test_ffi-ios-arm64.a"
 
     runs-on: ${{ matrix.platform.os }}
     permissions:
